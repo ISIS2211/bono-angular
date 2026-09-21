@@ -1,4 +1,43 @@
-# BonoAngular
+# Bono Angular — Conversor de color hexadecimal
+
+Bono de ISIS-2211 (Ingeniería de Software Moderna, Uniandes): un conversor de color hexadecimal a
+RGB y a escala de grises, hecho con 3 tipos de componentes que se comunican mediante un servicio
+compartido, sin `@Input`/`@Output`.
+
+## Componentes
+
+| Tipo del enunciado | Componente | Qué hace |
+| --- | --- | --- |
+| A | `ColorInput` (`app-color-input`) | Formulario Reactive Forms con un campo de texto para el hex y un botón de submit. |
+| B (x3) | `ColorChannel` (`app-color-channel`) | Muestra un valor de solo lectura con una etiqueta (`R`, `G`, `B`). |
+| C | `ColorPreview` (`app-color-preview`) | Muestra dos cajas de color: el color original y su versión en escala de grises. |
+
+## Cómo se conectan
+
+`ColorService` (`providedIn: 'root'`) guarda el hex en un `signal` y deriva `r`, `g`, `b`, `gris` y
+`hexGris` con `computed()`. Ninguno de los tres tipos de componente conoce a los otros: `ColorInput`
+inyecta el servicio y llama `establecerHex()` al hacer submit; `App` (el componente raíz) inyecta el
+mismo servicio y pasa sus signals hacia abajo con `input()` a las 3 instancias de `ColorChannel` y a
+`ColorPreview`.
+
+Este es el mismo patrón que enseña el curso para sincronizar componentes que no se conocen entre sí
+(servicio `providedIn: 'root'` + signals + `computed()`), visto en:
+
+- `temas/frontend/Angular Signals.md` — ejemplo `CounterService`/`ControlsComponent`/`DisplayComponent`.
+- `talleres/Tutorial_ Compartir datos entre componentes con un servicio.md` — `ArtistCreate` y
+  `ArtistList`, "hermanos", sin `@Input`/`@Output`.
+- `temas/frontend/Angular.md` — tabla de mecanismos de comunicación y el ejemplo de `input()` con
+  `AlbumCardComponent` repetido con distintos valores.
+- `temas/frontend/Formularios Reactivos.md` y `talleres/Tutorial_ Crear un artista desde el front.md`
+  — patrón de `FormGroup`/`FormControl`/`Validators` usado en `ColorInput`.
+
+**Fuera del material del curso, dicho explícitamente:** el binding `[style.background-color]` para
+pintar las cajas de color (extensión del property binding `[propiedad]="valor"` que sí enseña el
+curso, pero con el prefijo `style.` no aparece literal en los talleres/temas), y la conversión
+hex↔RGB↔gris (`parseInt`, `toString(16)`, `padStart`) es JavaScript/TypeScript estándar, no algo
+enseñado puntualmente en el curso.
+
+---
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.6.
 
