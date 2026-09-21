@@ -1,4 +1,4 @@
-<label>
-  {{ etiqueta() }}
-  <input type="text" [value]="valor()" readonly />
-</label>
+<div class="fila-canal">
+  <span class="etiqueta">{{ etiqueta() }}</span>
+  <input type="number" min="0" max="255" [value]="valor()" (change)="actualizar($event)" />
+</div>

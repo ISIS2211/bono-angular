@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ColorService } from '../color';
 
@@ -19,6 +19,12 @@ export class ColorInput {
       validators: [Validators.required, Validators.pattern(/^#[0-9A-Fa-f]{6}$/)],
     }),
   });
+
+  constructor() {
+    effect(() => {
+      this.colorForm.controls.hex.setValue(this.colorService.hex());
+    });
+  }
 
   convertir(): void {
     if (this.colorForm.invalid) return;

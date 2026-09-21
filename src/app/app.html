@@ -1,7 +1,15 @@
-<app-color-input />
+<div class="panel panel-entrada">
+  <app-color-input />
+</div>
 
-<app-color-channel etiqueta="R" [valor]="colorService.r()" />
-<app-color-channel etiqueta="G" [valor]="colorService.g()" />
-<app-color-channel etiqueta="B" [valor]="colorService.b()" />
+<div class="fila-inferior">
+  <div class="panel panel-canales">
+    <app-color-channel etiqueta="R" canal="r" />
+    <app-color-channel etiqueta="G" canal="g" />
+    <app-color-channel etiqueta="B" canal="b" />
+  </div>
 
-<app-color-preview [color]="colorService.hex()" [colorGris]="colorService.hexGris()" />
+  <div class="panel panel-vista">
+    <app-color-preview [color]="colorService.hex()" [colorGris]="colorService.hexGris()" />
+  </div>
+</div>

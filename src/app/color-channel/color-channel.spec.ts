@@ -11,6 +11,8 @@ describe('ColorChannel', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(ColorChannel);
+    fixture.componentRef.setInput('etiqueta', 'R');
+    fixture.componentRef.setInput('canal', 'r');
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

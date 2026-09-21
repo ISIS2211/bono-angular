@@ -1,0 +1,15 @@
+.fila-canal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.etiqueta {
+  font-weight: bold;
+}
+
+input {
+  width: 70px;
+  padding: 4px;
+}

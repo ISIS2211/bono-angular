@@ -1,5 +1,5 @@
 <form [formGroup]="colorForm" (ngSubmit)="convertir()">
-  <input formControlName="hex" placeholder="#RRGGBB" />
+  <input formControlName="hex" />
 
   <button type="submit" [disabled]="colorForm.invalid">Convertir</button>
 </form>

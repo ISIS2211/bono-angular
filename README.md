@@ -8,17 +8,24 @@ compartido, sin `@Input`/`@Output`.
 
 | Tipo del enunciado | Componente | Qué hace |
 | --- | --- | --- |
-| A | `ColorInput` (`app-color-input`) | Formulario Reactive Forms con un campo de texto para el hex y un botón de submit. |
-| B (x3) | `ColorChannel` (`app-color-channel`) | Muestra un valor de solo lectura con una etiqueta (`R`, `G`, `B`). |
+| A | `ColorInput` (`app-color-input`) | Formulario Reactive Forms con un campo de texto para el hex y un botón de submit. Se mantiene sincronizado con el servicio también cuando el cambio viene de un canal RGB. |
+| B (x3) | `ColorChannel` (`app-color-channel`) | Etiqueta (`R`, `G`, `B`) + campo numérico editable para ese canal. Al cambiarlo, escribe de vuelta en el servicio. |
 | C | `ColorPreview` (`app-color-preview`) | Muestra dos cajas de color: el color original y su versión en escala de grises. |
 
 ## Cómo se conectan
 
 `ColorService` (`providedIn: 'root'`) guarda el hex en un `signal` y deriva `r`, `g`, `b`, `gris` y
-`hexGris` con `computed()`. Ninguno de los tres tipos de componente conoce a los otros: `ColorInput`
-inyecta el servicio y llama `establecerHex()` al hacer submit; `App` (el componente raíz) inyecta el
-mismo servicio y pasa sus signals hacia abajo con `input()` a las 3 instancias de `ColorChannel` y a
-`ColorPreview`.
+`hexGris` con `computed()`, además de exponer `establecerHex()` y `establecerCanal(canal, valor)`
+para escribir desde cualquier lado. Ninguno de los tres tipos de componente conoce a los otros:
+
+- `ColorInput` inyecta el servicio, llama `establecerHex()` al hacer submit, y con un `effect()`
+  (tal como se enseña en Angular Signals) mantiene su propio campo sincronizado cada vez que el hex
+  del servicio cambia por otra vía (por ejemplo, al editar un canal RGB).
+- Cada `ColorChannel` inyecta el servicio directamente, lee su canal con un `computed()` y escribe
+  con `establecerCanal()` al cambiar su campo — así una edición en R/G/B se refleja también arriba y
+  en las cajas de color, como pide la rúbrica del bono.
+- `App` (el componente raíz) inyecta el mismo servicio y le pasa sus signals a `ColorPreview` con
+  `input()`.
 
 Este es el mismo patrón que enseña el curso para sincronizar componentes que no se conocen entre sí
 (servicio `providedIn: 'root'` + signals + `computed()`), visto en:
@@ -31,11 +38,20 @@ Este es el mismo patrón que enseña el curso para sincronizar componentes que n
 - `temas/frontend/Formularios Reactivos.md` y `talleres/Tutorial_ Crear un artista desde el front.md`
   — patrón de `FormGroup`/`FormControl`/`Validators` usado en `ColorInput`.
 
-**Fuera del material del curso, dicho explícitamente:** el binding `[style.background-color]` para
-pintar las cajas de color (extensión del property binding `[propiedad]="valor"` que sí enseña el
-curso, pero con el prefijo `style.` no aparece literal en los talleres/temas), y la conversión
-hex↔RGB↔gris (`parseInt`, `toString(16)`, `padStart`) es JavaScript/TypeScript estándar, no algo
-enseñado puntualmente en el curso.
+**Fuera del material del curso, dicho explícitamente:**
+
+- El binding `[style.background-color]` para pintar las cajas de color (extensión del property
+  binding `[propiedad]="valor"` que sí enseña el curso, pero con el prefijo `style.` no aparece
+  literal en los talleres/temas).
+- La conversión hex↔RGB↔gris (`parseInt`, `toString(16)`, `padStart`) es JavaScript/TypeScript
+  estándar, no algo enseñado puntualmente en el curso.
+- `ColorChannel.actualizar()` lee el valor del `<input>` con `(evento.target as HTMLInputElement).value`
+  en vez de Reactive Forms: para un solo campo numérico por instancia, armar un `FormGroup` completo
+  era más aparato del que pedía el problema. Es la forma mínima de leer un `<input>` nativo sin
+  `ngModel` ni Reactive Forms; no aparece así, literal, en el material.
+- `colorForm.controls.hex.setValue(...)` dentro del `effect()` de `ColorInput`: el curso usa
+  `.reset()` y `.getRawValue()` sobre un `FormGroup`, pero no muestra `setValue()` puntualmente —
+  es la contraparte natural para escribir un valor nuevo en un control ya creado.
 
 ---
 

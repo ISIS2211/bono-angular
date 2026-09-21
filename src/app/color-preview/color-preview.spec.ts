@@ -11,6 +11,8 @@ describe('ColorPreview', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(ColorPreview);
+    fixture.componentRef.setInput('color', '#000000');
+    fixture.componentRef.setInput('colorGris', '#000000');
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

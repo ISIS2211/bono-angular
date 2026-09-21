@@ -1,5 +1,9 @@
 import { Injectable, signal, computed } from '@angular/core';
 
+function aByteHex(valor: number): string {
+  return valor.toString(16).padStart(2, '0');
+}
+
 @Injectable({ providedIn: 'root' })
 export class ColorService {
   private _hex = signal<string>('#000000');
@@ -12,11 +16,19 @@ export class ColorService {
   readonly gris = computed(() => Math.round((this.r() + this.g() + this.b()) / 3));
 
   readonly hexGris = computed(() => {
-    const canal = this.gris().toString(16).padStart(2, '0');
+    const canal = aByteHex(this.gris());
     return `#${canal}${canal}${canal}`;
   });
 
   establecerHex(nuevoHex: string): void {
     this._hex.set(nuevoHex);
+  }
+
+  establecerCanal(canal: 'r' | 'g' | 'b', valor: number): void {
+    const acotado = Math.min(255, Math.max(0, Math.round(valor)));
+    const r = canal === 'r' ? acotado : this.r();
+    const g = canal === 'g' ? acotado : this.g();
+    const b = canal === 'b' ? acotado : this.b();
+    this._hex.set(`#${aByteHex(r)}${aByteHex(g)}${aByteHex(b)}`);
   }
 }
